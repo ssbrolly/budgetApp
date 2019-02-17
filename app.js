@@ -1,40 +1,60 @@
-// BUDGET CONTROLLER
-let budgetController = (function() {
+// // BUDGET CONTROLLER
+// let budgetController = (function() {
     
     
-})();
+// })();
 
-// UI CONTROLLER
-let uiController = (function() {
+// // UI CONTROLLER
+// let uiController = (function() {
 
-    return {
-        getInput: function() {
-            return {
-                type: document.querySelector('.add__type').value,
-                description: document.querySelector('.add__description').value,
-                value: document.querySelector('.add__value').value,
-            };       
-        },
-    };
-})();
+//     let DomStrings = {
+//         inputType: '.add__type',
+//         inputDescription: '.add__description',
+//         inputValue: '.add__value',
+//         inputBtn: '.add__btn',
+//     };
 
-// GLOBAL CONTROLLER
-let controller= (function(budgetCtrl, uiCtrl) {
+//     return {
+//         getInput: function() {
+//             return {
+//                 type: document.querySelector(DomStrings.inputType).value,
+//                 description: document.querySelector(DomStrings.inputDescription).value,
+//                 value: document.querySelector(DomStrings.inputValue).value,
+//             };       
+//         },
+//         getDomStrings: function() {
+//             return DomStrings;
+//         },
+//     };
+// })();
 
-    let ctrlAddItem = function() {
-        let input = uiCtrl.getInput();
-        console.log(input);
-    }
+// // GLOBAL CONTROLLER
+// let controller= (function(budgetCtrl, uiCtrl) {
 
-    document.querySelector('.add__btn').addEventListener('click', ctrlAddItem);
+//     let setupEventListeners = function() {
+//         let dom = uiCtrl.getDomStrings();
+//         document.querySelector(dom.inputBtn).addEventListener('click', ctrlAddItem);
     
-    document.addEventListener('keypress', (e) => {
-        if (e.keyCode === 13) {
-            ctrlAddItem();
-        };
-    });
+//         document.addEventListener('keypress', (e) => {
+//             if (e.keyCode === 13) {
+//                 ctrlAddItem();
+//             };
+//         });    
+//     };
+    
+//     let ctrlAddItem = function() {
+//         let input = uiCtrl.getInput();
+//     };
 
-})(budgetController, uiController);
+//     return {
+//         init: function() {
+//             setupEventListeners();
+//         },
+//     };
+   
+// })(budgetController, uiController);
+
+// controller.init();
 
 
 
