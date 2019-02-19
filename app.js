@@ -27,10 +27,10 @@ let budgetController = (function() {
     return {
         addItem: function(type, des, val) {
             let newItem, ID;
-            let dataLength = data.allItems[type].length - 1;
-            if (dataLength + 1 > 0) {
+            let dataLength = data.allItems[type].length;
+            if (dataLength > 0) {
                 // Create new Id
-                ID = data.allItems[type][dataLength].id + 1;
+                ID = data.allItems[type][dataLength - 1].id + 1;
             } else {
                 ID = 0;
             };
@@ -52,8 +52,6 @@ let budgetController = (function() {
     
 })();
 
-
-
 // UI CONTROLLER
 let uiController = (function() {
 
@@ -62,6 +60,8 @@ let uiController = (function() {
         inputDescription: '.add__description',
         inputValue: '.add__value',
         inputBtn: '.add__btn',
+        incomeContainer: '.inocome__list', 
+        expensesContainer: '.expenses__list', 
     };
 
     return {
@@ -72,6 +72,25 @@ let uiController = (function() {
                 value: document.querySelector(DomStrings.inputValue).value,
             };       
         },
+
+        addListItem: function(obj, type) {
+            let html, newHtml, element;
+
+            if (type === 'income') {
+                element = DomStrings.incomeContainer;
+                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value% </div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+            } else if (type === 'expense') {
+                element = DomStrings.expensesContainer;
+                html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+            };
+
+            newHtml = html.replace('%id%', obj.id);
+            newHtml = newHtml.replace('%description%', obj.description);
+            newHtml = newHtml.replace('%value%', obj.value);
+
+            document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+        },
+
         getDomStrings: function() {
             return DomStrings;
         },
@@ -94,7 +113,8 @@ let controller= (function(budgetCtrl, uiCtrl) {
     
     let ctrlAddItem = function() {
         let input = uiCtrl.getInput();
-        let newItem = budgetCtrl.addItem(input.type, input.description, input.value)
+        let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+        uiCtrl.addListItem(newItem, input.type);
 
     };
 
@@ -107,7 +127,3 @@ let controller= (function(budgetCtrl, uiCtrl) {
 })(budgetController, uiController);
 
 controller.init();
-
-
-
-
