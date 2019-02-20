@@ -124,10 +124,9 @@
 
 // controller.init();
 
-
 let budgetController = (function() {
 
-    let Expense = function(id, description, value) {
+    let Expenses = function(id, description, value) {
         this.id = id,
         this.description = description,
         this.value = value
@@ -148,47 +147,44 @@ let budgetController = (function() {
             expense: 0,
             income: 0
         },
-    };
+    }
 
     return {
-        addItem: function(type, des, val) {
-            let newItem, Id, dataLength;
-            dataLength = data.allItems[type].length;
-            if (dataLength > 0) {
-                Id = data.allItems[type][dataLength - 1].id + 1;
+        addItems: function(type, des, val) {
+            let Id, newItem, idLength;
+            idLength = data.allItems[type].length;
+            if (idLength > 0) {
+                Id = data.allItems[type][idLength - 1].id + 1;
             } else {
                 Id = 0;
-            };
+            }
             if (type === 'expense') {
-                newItem = new Expense(Id, des, val);
+                newItem = new Expenses(Id, des,val);
             } else if (type === 'income') {
-                newItem = new Income(Id, des, val);
+                newItem = new Income(Id, des, val)
             };
             data.allItems[type].push(newItem);
             return newItem;
-                
         },
     };
-
-
 
 })();
 
 let uiController = (function() {
 
     let DomStrings = {
-        inputBtn: '.add__btn',
         inputType: '.add__type',
         inputDescription: '.add__description',
-        inputValue: '.add__value'
-    }
+        inputValue: '.add__value',
+        inputBtn: '.add__btn'
+    };
 
     return {
         getInput: function() {
             return {
                 type: document.querySelector(DomStrings.inputType).value,
                 description: document.querySelector(DomStrings.inputDescription).value,
-                value: document.querySelector(DomStrings.inputValue).value
+                value: document.querySelector(DomStrings.inputValue).value,
             };
         },
         getDomStrings: function() {
@@ -199,19 +195,20 @@ let uiController = (function() {
 })();
 
 let controller = (function(budgetCtrl, uiCtrl) {
+    
     function eventListeners() {
         let dom = uiCtrl.getDomStrings();
-        document.querySelector(dom.inputBtn).addEventListener('click', addListItem);
+        document.querySelector(dom.inputBtn).addEventListener('click', ctrlAddItems);
         document.addEventListener('keypress', (e) => {
             if (e.keyCode === 13) {
-                addListItem();
+                ctrlAddItems();
             };
         });
     };
 
-    function addListItem() {
+    function ctrlAddItems() {
         let input = uiCtrl.getInput();
-        let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+        let newItem = budgetCtrl.addItems(input.type, input.description, input.value);
         console.log(newItem);
     };
 
@@ -222,6 +219,6 @@ let controller = (function(budgetCtrl, uiCtrl) {
     };
 
 
-})(budgetController, uiController);
+})(budgetController, uiController)
 
 controller.init();
