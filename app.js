@@ -12,6 +12,14 @@ let budgetController = (function() {
         this.description = description;
         this.value = value;
     };
+    
+    function calculateTotal(type) {
+        let sum = 0;
+         data.allItems[type].forEach(cur => {
+            sum += cur.value;
+        });
+        data.totals[type] = sum;
+    };
 
     let data = {
         allItems: {
@@ -22,6 +30,8 @@ let budgetController = (function() {
             expense: 0,
             income: 0,
         },
+        budget: 0,
+        percentage: -1,
     };
 
     return {
@@ -43,6 +53,32 @@ let budgetController = (function() {
             // Push it in to our data structure;
             data.allItems[type].push(newItem);
             return newItem;
+        },
+
+        calcBudget: function() {
+
+            // calculate total income and expenses
+            calculateTotal('expense');
+            calculateTotal('income');
+
+            // calculate the budget: income - expenses
+            data.budget = data.totals.income - data.totals.expense
+
+            // calculate the percentage of income spent
+            if (data.totals.income > 0) {
+                data.percentage = Math.round((data.totals.expense / data.totals.income) * 100);
+            } else {
+                data.percentage = -1;
+            }
+        },
+
+        getBudget: function() {
+            return {
+                budget: data.budget,
+                totalIncome: data.totals.income,
+                totalExpense: data.totals.expense,
+                percentage: data.percentage,
+            };
         },
 
         testing: function() {
@@ -124,11 +160,12 @@ let controller= (function(budgetCtrl, uiCtrl) {
     let updateBudget = function() {
 
         // Calculate the budget
-
+        budgetCtrl.calcBudget();
         // Return the budget
-
+        let budget = budgetCtrl.getBudget();
         // Display the budget on the Ui
-    }
+        console.log(budget);
+    };
     
     let ctrlAddItem = function() {
         // Get the field input data
