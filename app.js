@@ -44,6 +44,10 @@ let budgetController = (function() {
             data.allItems[type].push(newItem);
             return newItem;
         },
+
+        testing: function() {
+            return data;
+        },
     };
     
 })();
@@ -56,7 +60,7 @@ let uiController = (function() {
         inputDescription: '.add__description',
         inputValue: '.add__value',
         inputBtn: '.add__btn',
-        incomeContainer: '.income__list', 
+        incomeContainer: '.income__list',
         expensesContainer: '.expenses__list', 
     };
 
@@ -65,7 +69,7 @@ let uiController = (function() {
             return {
                 type: document.querySelector(DomStrings.inputType).value,
                 description: document.querySelector(DomStrings.inputDescription).value,
-                value: document.querySelector(DomStrings.inputValue).value,
+                value: parseFloat(document.querySelector(DomStrings.inputValue).value),
             };       
         },
 
@@ -87,6 +91,16 @@ let uiController = (function() {
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
         },
 
+        clearFields: function() {
+            let fields = document.querySelectorAll(DomStrings.inputDescription + ', ' + DomStrings.inputValue);
+            // let fieldsArr = Array.prototype.slice.call(fields);
+            let fieldsArr = Array.from(fields);
+            fieldsArr.forEach(cur => {
+                cur.value = '';
+            });
+            fieldsArr[0].focus();
+        },
+
         getDomStrings: function() {
             return DomStrings;
         },
@@ -106,12 +120,33 @@ let controller= (function(budgetCtrl, uiCtrl) {
             };
         });    
     };
+
+    let updateBudget = function() {
+
+        // Calculate the budget
+
+        // Return the budget
+
+        // Display the budget on the Ui
+    }
     
     let ctrlAddItem = function() {
+        // Get the field input data
         let input = uiCtrl.getInput();
-        let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
-        uiCtrl.addListItem(newItem, input.type);
 
+        if (input.description !== '' && !isNaN(input.value) && input.value > 0) {
+            // Add the item to the budget controller
+            let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+
+            // Add the Item to the Ui
+            uiCtrl.addListItem(newItem, input.type);
+
+            // Clear the fields
+            uiCtrl.clearFields();
+
+            // Calculate and update budget
+            updateBudget();
+        }; 
     };
 
     return {
