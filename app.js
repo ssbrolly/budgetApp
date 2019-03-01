@@ -210,7 +210,41 @@ let budgetController = (function() {
         this.value = value
     };
 
-        
+    let data = {
+        allItems: {
+            expense: 'expense',
+            income: 'income'
+        },
+        total: {
+            expense: 0,
+            income: 0,
+        },
+    };
+
+    return {
+        addItems: function(type, des, val) {
+            let newItem, Id, idLength;
+            idLength = data.allItems[type].length;
+            if (idLength > 0) {
+                Id = data.allItems[type][idLength - 1].id + 1;
+            } else {
+                Id = 0;
+            };
+            if (type === 'expense') {
+                newItem = new Expense(Id, des, val);
+            } else if (type === 'income') {
+                newItem = new Income(Id, des, val);
+            };
+            data.allItems[type].push(newItem);
+            return newItem;
+        },
+
+        testing: function() {
+            return data;
+        },
+    };
+
+    
 
 })();
 
@@ -236,7 +270,7 @@ let uiController = (function() {
             let fields = document.querySelectorAll(DomStrings.inputDescription + ', ' + DomStrings.inputValue);
             let fieldsArr = Array.from(fields);
             fieldsArr.forEach(cur => {
-                cur.vlaue = '';
+                cur.value = '';
             });
             fieldsArr[0].focus();
         },
@@ -252,9 +286,7 @@ let controller = (function(budgetCtrl, uiCtrl) {
 
     let eventListener = function() {
         let dom = uiCtrl.getDomStrings();
-        
         document.querySelector(dom.inputBtn).addEventListener('click', ctrlAddItems);
-        
         document.addEventListener('keypress', (e) => {
             if (e.keyCode === 13) {
                 ctrlAddItems()
