@@ -239,9 +239,6 @@ let budgetController = (function() {
             return newItem;
         },
 
-        testing: function() {
-            return data;
-        },
     };
 
     
