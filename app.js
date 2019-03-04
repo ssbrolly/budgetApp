@@ -221,23 +221,23 @@ let budgetController = (function() {
         },
     };
 
-    return {
-        addItems: function(type, des, val) {
-            let newItem, Id, idLength;
-            idLength = data.allItems[type].length;
-            if (idLength > 0) {
-                Id = data.allItems[type][idLength - 1].id + 1;
-            } else {
-                Id = 0;
-            };
-            if (type === 'expense') {
-                newItem = new Expense(Id, des, val);
-            } else if (type === 'income') {
-                newItem = new Income(Id, des, val);
-            };
-            data.allItems[type].push(newItem);
-            return newItem;
-        },
+    // return {
+    //     addItems: function(type, des, val) {
+    //         let newItem, Id, idLength;
+    //         idLength = data.allItems[type].length;
+    //         if (idLength > 0) {
+    //             Id = data.allItems[type][idLength - 1].id + 1;
+    //         } else {
+    //             Id = 0;
+    //         };
+    //         if (type === 'expense') {
+    //             newItem = new Expense(Id, des, val);
+    //         } else if (type === 'income') {
+    //             newItem = new Income(Id, des, val);
+    //         };
+    //         data.allItems[type].push(newItem);
+    //         return newItem;
+    //     },
 
     };
 
