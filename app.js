@@ -247,6 +247,50 @@
      
 // })();
 
+let budgetController = (function() {
+
+    let Expense = function(id, description, value) {
+        this.id = id,
+        this.description = description,
+        this.value = value
+    };
+
+    let Income = function(id , description, value) {
+        this.id = id,
+        this.decription = description,
+        this.value = value
+    };
+
+    let data = {
+        allItems: {
+            expense: [],
+            income: []
+        },
+
+        total: {
+            expense: 0,
+            income: 0,
+        },
+    };
+
+    return {
+        addItem: function(type, des, val) {
+            let newItem, Id, idLength;
+            idLength = data.allItems[type].length;
+            if (idLength > 0) {
+                Id = data.allItems[type][idLength - 1].id + 1;
+            } else {
+                Id =0;
+            }
+            if (type === 'expense') {
+                newItem = new Expense(Id, des, val);
+            } else if (type === 'Income') {
+                newItem = new Income(Id, des, val);
+            };
+        },
+    };
+
+})();
 
 let uiController = (function() {
 
