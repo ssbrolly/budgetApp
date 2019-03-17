@@ -200,162 +200,18 @@
 
 
 
-// let budgetController = (function() {
-
-//     let Expense = function(id, description, value) {
-//         this.id = id;
-//         this.description = description;
-//         this.value = value;
-//     };
-
-//     let Income = function(id, description, value) {
-//         this.id = id;
-//         this.description = description;
-//         this.value = value;
-//     };
-
-//     let data = {
-//         allItems: {
-//             expense: [],
-//             income: [],
-//         },
-//         total: {
-//             expense: 0,
-//             income: 0,
-//         },
-//     };
-
-//     return {
-//         addItem: function(type, des, val) {
-//             let newItem, Id, idLength;
-//             idLength = data.allItems[type].length;
-//             if (idLength > 0) {
-//                 Id = data.allItems[type][idLength - 1].id + 1;
-//             } else {
-//                 Id = 0;
-//             };
-//             if (type === 'expense') {
-//                 newItem = new Expense(Id, des, val);
-//             } else if (type === 'income') {
-//                 newItem = new Income(Id, des, val);
-//             };
-//             data.allItems[type].push(newItem);
-//             return newItem;
-//         },
-//         testing: function() {
-//             console.log(data);
-//         },
-//     };
-     
-// })();
-
-// let uiController = (function() {
-
-//     let DomStrings = {
-//         inputType: '.add__type',
-//         inputDescription: '.add__description',
-//         inputValue: '.add__value',
-//         inputBtn: '.add__btn',
-//         incomeContainer: '.income__list',
-//         expenseContainer: '.expenses__list',
-//     };
-
-//     return {
-//         getInput: function() {
-//             return {
-//                  type: document.querySelector(DomStrings.inputType).value,
-//                  description: document.querySelector(DomStrings.inputDescription).value,
-//                  value: document.querySelector(DomStrings.inputValue).value,
-//             }
-//         },
-
-//         addListItem: function(obj, type) {
-//             let html, newHtml, element;
-
-//             if (type === 'income') {
-//                 element = DomStrings.incomeContainer;
-//                 html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
-
-//             } else if (type === 'expense') {
-//                 element = DomStrings.expenseContainer;
-//                 html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
-
-//             };
-
-//             newHtml = html.replace('%id%', obj.id);
-//             newHtml = newHtml.replace('%description%', obj.description);
-//             newHtml = newHtml.replace('%value%', obj.value);
-
-//             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
-
-//         },
-
-//         clearFields: function() {
-//             let fields, fieldsArr;;
-//             fields = document.querySelectorAll(DomStrings.inputDescription + ', ' + DomStrings.inputValue);
-//             // fieldsArr = Array.prototype.slice.call(fields);
-//             fieldsArr = Array.from(fields);
-//             // fieldsArr.forEach(cur => {
-//             //     cur.value = '';
-//             // });
-//             for (let i = 0; i < fieldsArr.length; i++) {
-//                 fieldsArr[i].value = '';
-//             };
-//             fieldsArr[0].focus();
-//         },
-
-//         getDomStrings: function() {
-//             return DomStrings;
-//         },
-//     };
-
-// })();
-
-
-// let controller = (function(budgetCtrl, uiCtrl) {
-
-//     let setupEventListeners = function() {
-//         let dom = uiCtrl.getDomStrings();
-//         document.querySelector(dom.inputBtn).addEventListener('click', ctrlAddItem);
-//         document.addEventListener('keypress', (e) => {
-//             if (e.keyCode === 13 || e.which === 13) {
-//                 ctrlAddItem();
-//             };
-//         });
-//     }
-
-//     let ctrlAddItem = function() {
-//         let input = uiCtrl.getInput();
-//         let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
-//         uiCtrl.addListItem(newItem, input.type);
-//         uiCtrl.clearFields();
-//         console.log(input);
-//     };
-
-//     return {
-//         init: function() {
-//             setupEventListeners();
-//         },
-//     };
-    
-
-// })(budgetController, uiController);
-
-// controller.init();
-
-
 let budgetController = (function() {
 
-    let Expenses = function(id, description, value) {
-        this.id = id,
-        this.description = description,
-        this.value = value
+    let Expense = function(id, description, value) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
     };
 
     let Income = function(id, description, value) {
-        this.id = id,
-        this.description = description,
-        this.value = value
+        this.id = id;
+        this.description = description;
+        this.value = value;
     };
 
     let data = {
@@ -363,7 +219,7 @@ let budgetController = (function() {
             expense: [],
             income: [],
         },
-        totals: {
+        total: {
             expense: 0,
             income: 0,
         },
@@ -371,7 +227,7 @@ let budgetController = (function() {
 
     return {
         addItem: function(type, des, val) {
-            let Id, idLength, newItem;
+            let newItem, Id, idLength;
             idLength = data.allItems[type].length;
             if (idLength > 0) {
                 Id = data.allItems[type][idLength - 1].id + 1;
@@ -379,16 +235,18 @@ let budgetController = (function() {
                 Id = 0;
             };
             if (type === 'expense') {
-                newItem = new Expenses(Id, des, val);
+                newItem = new Expense(Id, des, val);
             } else if (type === 'income') {
                 newItem = new Income(Id, des, val);
             };
-            data.allItem[type].push(newItem);
+            data.allItems[type].push(newItem);
             return newItem;
         },
+        testing: function() {
+            console.log(data);
+        },
     };
-
-
+     
 })();
 
 let uiController = (function() {
@@ -398,42 +256,51 @@ let uiController = (function() {
         inputDescription: '.add__description',
         inputValue: '.add__value',
         inputBtn: '.add__btn',
-        incomeContainer: 'income__list',
-        expenseContainer: 'expense__list',
-    },
+        incomeContainer: '.income__list',
+        expenseContainer: '.expenses__list',
+    };
 
     return {
         getInput: function() {
             return {
-                type: document.querySelector(DomStirngs.inpuType).value,
-                description: document.querySelector(DomStrings.inputDescription).value,
-                value: document.querySelector(DomStrings.inputValue).value,
-            };
+                 type: document.querySelector(DomStrings.inputType).value,
+                 description: document.querySelector(DomStrings.inputDescription).value,
+                 value: document.querySelector(DomStrings.inputValue).value,
+            }
         },
 
         addListItem: function(obj, type) {
             let html, newHtml, element;
-            if (type === 'expense') {
-                element = Domstrings.expenseContainer;
-                html = 'blah blah';
-            } else if (type === 'income') {
+
+            if (type === 'income') {
                 element = DomStrings.incomeContainer;
-                html = 'blah blah blah';
+                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+
+            } else if (type === 'expense') {
+                element = DomStrings.expenseContainer;
+                html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+
             };
 
-            newtHtml = html.replace('blah', DomStrings.inputValue);
-            newHtml = newHtml.replace('blah', DomStrings.inputDescription);
-            newHtml = newHtml.replace('blah', DomStrings.obj.id)
-            document.querySelectorAll(element).insertAdjacnetHTML('beforeend', newHtml);      
+            newHtml = html.replace('%id%', obj.id);
+            newHtml = newHtml.replace('%description%', obj.description);
+            newHtml = newHtml.replace('%value%', obj.value);
+
+            document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+
         },
 
         clearFields: function() {
-            let fields, fieldsArr;
-            fields = document.querySelectorAll(DomStrings.description + ',' + DomStrings.value);
-            fieldsArr = Array.from(fields)
-            fields.forEach(cur => {
-                cur.value = '';
-            });
+            let fields, fieldsArr;;
+            fields = document.querySelectorAll(DomStrings.inputDescription + ', ' + DomStrings.inputValue);
+            // fieldsArr = Array.prototype.slice.call(fields);
+            fieldsArr = Array.from(fields);
+            // fieldsArr.forEach(cur => {
+            //     cur.value = '';
+            // });
+            for (let i = 0; i < fieldsArr.length; i++) {
+                fieldsArr[i].value = '';
+            };
             fieldsArr[0].focus();
         },
 
@@ -442,31 +309,38 @@ let uiController = (function() {
         },
     };
 
-
-
 })();
+
 
 let controller = (function(budgetCtrl, uiCtrl) {
 
-    function eventListeners() {
+    let setupEventListeners = function() {
         let dom = uiCtrl.getDomStrings();
         document.querySelector(dom.inputBtn).addEventListener('click', ctrlAddItem);
         document.addEventListener('keypress', (e) => {
-            if (e.keyCode === 13) {
+            if (e.keyCode === 13 || e.which === 13) {
                 ctrlAddItem();
             };
         });
-    };
+    }
 
-    function ctrlAddItem() {
+    let ctrlAddItem = function() {
         let input = uiCtrl.getInput();
+        let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+        uiCtrl.addListItem(newItem, input.type);
+        uiCtrl.clearFields();
+        console.log(input);
     };
 
     return {
         init: function() {
-            return eventListeners();
-        }
-    }
+            setupEventListeners();
+        },
+    };
+    
 
 })(budgetController, uiController);
-controller.init();
+
+// controller.init();
+
+
