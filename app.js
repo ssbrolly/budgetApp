@@ -72,6 +72,7 @@ let budgetController = (function() {
             }
         },
 
+
         getBudget: function() {
             return {
                 budget: data.budget,
@@ -141,8 +142,7 @@ let uiController = (function() {
             fieldsArr[0].focus();
         },
 
-        displayBudget: function(obj) {
-            
+        displayBudget: function(obj) {            
             document.querySelector(DomStrings.budgetLabel).textContent = obj.budget;
             document.querySelector(DomStrings.incomeLabel).textContent = obj.totalIncome;
             document.querySelector(DomStrings.expenseLabel).textContent = obj.totalExpense;
@@ -151,7 +151,7 @@ let uiController = (function() {
             } else {
                 document.querySelector(DomStrings.percentageLabel).textContent = '---';
 
-            }
+            };
 
         
         },
