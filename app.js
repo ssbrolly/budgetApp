@@ -219,11 +219,23 @@ let budgetController = (function() {
             expense: [],
             income: [],
         },
-        total: {
+        totals: {
             expense: 0,
             income: 0,
         },
+        budget: 0,
+        percentage: -1,
     };
+
+    let calculateTotals = function(type) {
+        let sum = 0;
+        data.allItems[type].forEach(cur => {
+            sum += cur.value;
+        });
+        data.totals[type] = sum;
+    }
+
+    
 
     return {
         addItem: function(type, des, val) {
@@ -242,6 +254,32 @@ let budgetController = (function() {
             data.allItems[type].push(newItem);
             return newItem;
         },
+
+        calculateBudget: function() {
+            calculateTotals('expense');
+            calculateTotals('income');
+            data.budget = data.totals.income - data.totals.expense;
+            if (data.totals.income > 0) {
+                data.percentage = Math.round((data.totals.expense / data.totals.income) * 100);
+            } else {
+                data.percnetage = -1; 
+            }
+        },
+
+                
+
+        getBudget: function() {
+            return {
+                budget: data.budget,
+                totalIncome: data.totals.income,
+                totalExpense: data.totals.expense,
+                percentage: data.percentage,
+            }
+
+        },
+
+    
+
         testing: function() {
             console.log(data);
         },
@@ -291,23 +329,33 @@ let uiController = (function() {
         },
 
         clearFields: function() {
-            let fields, fieldsArr;;
-            fields = document.querySelectorAll(DomStrings.inputDescription + ', ' + DomStrings.inputValue);
-            // fieldsArr = Array.prototype.slice.call(fields);
-            fieldsArr = Array.from(fields);
-            // fieldsArr.forEach(cur => {
-            //     cur.value = '';
-            // });
-            for (let i = 0; i < fieldsArr.length; i++) {
-                fieldsArr[i].value = '';
-            };
-            fieldsArr[0].focus();
+            let fieldsDescription = document.querySelector(DomStrings.inputDescription);
+            let fieldsValue = document.querySelector(DomStrings.inputValue);
+            fieldsDescription.value = '';
+            fieldsValue.value = '';
+            fieldsDescription.focus();
         },
+
+    //     clearFields: function() {
+    //         let fields, fieldsArr;;
+    //         fields = document.querySelectorAll(DomStrings.inputDescription + ', ' + DomStrings.inputValue);
+    //         // fieldsArr = Array.prototype.slice.call(fields);
+    //         fieldsArr = Array.from(fields);
+    //         // fieldsArr.forEach(cur => {
+    //         //     cur.value = '';
+    //         // });
+    //         for (let i = 0; i < fieldsArr.length; i++) {
+    //             fieldsArr[i].value = '';
+    //         };
+    //         fieldsArr[0].focus();
+    //     },
 
         getDomStrings: function() {
             return DomStrings;
         },
     };
+
+    
 
 })();
 
@@ -324,8 +372,16 @@ let controller = (function(budgetCtrl, uiCtrl) {
         });
     }
 
-    let updateBudget = function() {
+    // let updateBudget = function() {
+    //     budgetCtrl.calculateBudget();
+    //     let budget = budgetCtrl.getBudget();
+    //     console.log(budget);
+    // }
 
+    let updateBudget = function() {
+        budgetCtrl.calculateBudget();
+        let budget = budgetCtrl.getBudget();
+        console.log(budget);
     }
 
     let ctrlAddItem = function() {
@@ -334,7 +390,7 @@ let controller = (function(budgetCtrl, uiCtrl) {
             let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
             uiCtrl.addListItem(newItem, input.type);
             uiCtrl.clearFields();
-            console.log(input);
+            updateBudget();
         };
     };
 
