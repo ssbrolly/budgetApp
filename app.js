@@ -277,13 +277,23 @@ let budgetController = (function() {
 
     let data = {
         allItems: {
-            budget: [],
+            expense: [],
             income: [],
         },
         totals: {
-            budget: 0,
+            expense: 0,
             income: 0
         },
+        budget: 0,
+        percentage: -1
+    };
+
+    function calculateTotals(type) {
+        let sum = 0;
+        data.allItems[type].forEach(cur => {
+            sum += cur.value;
+        });
+        data.totals[type] = sum;
     };
 
     return {
@@ -304,6 +314,28 @@ let budgetController = (function() {
             return newItem;
         },
 
+        calculateBudget: function() {
+            calculateTotals('expense');
+            calculateTotals('income');
+            let income = data.totals.income;
+            let expense = data.totals.expense;
+            data.budget = income - expense;
+            if (income > 0) {
+                data.percentage = Math.round((expense / income) * 100); 
+            } else {
+                data.percentage = -1;
+            };
+        },
+
+        getbudget: function() {
+            return {
+                budget: data.budget,
+                totalIncome: data.totals.income,
+                totalexpense: data.totals.expense,
+                percentage: data.percentage,
+            };
+        },
+
         testing: function() {
             return data;
         }
@@ -318,6 +350,8 @@ let uiController = (function() {
         inputDescription: '.add__description',
         inputValue: '.add__value',
         inputBtn: '.add__btn',
+        incomeContainer: '.income__list',
+        expenseContainer: '.expenses__list'
     };
 
     return {
@@ -325,8 +359,26 @@ let uiController = (function() {
             return {
                 type: document.querySelector(domStrings.inputType).value,
                 description: document.querySelector(domStrings.inputDescription).value,
-                value: document.querySelector(domStrings.inputValue).value,
+                value: parseFloat(document.querySelector(domStrings.inputValue).value),
             };
+        },
+
+        addListItem: function(obj, type) {
+            let html, element, newHtml;
+            if (type === 'expense') {
+                element = domStrings.expenseContainer;
+                html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+            
+            } else if (type === 'income') {
+                element = domStrings.incomeContainer;
+                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+            };
+
+            newHtml = html.replace('%id%', obj.id);
+            newHtml = newHtml.replace('%description%', obj.description);
+            newHtml = newHtml.replace('%value%', obj.value);
+
+            document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
         },
 
         clearFields: function() {
@@ -359,13 +411,20 @@ let controller = (function(budgetCtrl, uiCtrl) {
         });
     };
 
+    let updateBudget = function() {
+        budgetCtrl.calculateBudget();
+        let budget = budgetCtrl.getbudget();
+        console.log(budget);
+    }
+
     function ctrlAddItem() {
         let input = uiCtrl.getInput();
-        if (input.description !== '' && !isNaN(input.value)) {
+        if (input.description !== '' && !isNaN(input.value) && input.value > 0) {
             let newItem = budgetCtrl.addItems(input.type, input.description, input.value);
-
+            updateBudget();
+            uiCtrl.addListItem(newItem, input.type);
+            uiCtrl.clearFields();
         };
-        uiCtrl.clearFields();
     };
 
     return {
