@@ -5,6 +5,19 @@ let budgetController = (function() {
         this.id = id;
         this.description = description;
         this.value = value;
+        this.percentage = -1;
+    };
+
+    Expense.prototype.calcPercentages = function(totalIncome) {
+        if (totalIncome > 0) {
+            this.percentage = Math.round((this.value / totalIncome) * 100);
+        } else {
+            this.percentage = -1;
+        };
+    }; 
+
+    Expense.prototype.getPercentage = function() {
+        return this.percentage;
     };
 
     let Income = function(id , description, value) {
@@ -67,14 +80,11 @@ let budgetController = (function() {
         },
 
         calcBudget: function() {
-
             // calculate total income and expenses
             calculateTotal('expense');
             calculateTotal('income');
-
             // calculate the budget: income - expenses
             data.budget = data.totals.income - data.totals.expense
-
             // calculate the percentage of income spent
             if (data.totals.income > 0) {
                 data.percentage = Math.round((data.totals.expense / data.totals.income) * 100);
@@ -83,7 +93,19 @@ let budgetController = (function() {
             }
         },
 
+        calculatePercentage: function() {
+            data.allItems.expense.forEach(cur => {
+                cur.calcPercentages(data.totals.income);
+            });
+        },
 
+        getPercentages: function() {
+            let allPerc = data.allItems.expense.map(cur => {
+                return cur.getPercentage();
+            });
+            return allPerc;
+        },
+                        
         getBudget: function() {
             return {
                 budget: data.budget,
@@ -96,6 +118,7 @@ let budgetController = (function() {
         testing: function() {
             return data;
         },
+
     };
     
 })();
@@ -128,7 +151,6 @@ let uiController = (function() {
 
         addListItem: function(obj, type) {
             let html, newHtml, element;
-
             if (type === 'income') {
                 element = DomStrings.incomeContainer;
                 html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value% </div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
@@ -136,11 +158,9 @@ let uiController = (function() {
                 element = DomStrings.expensesContainer;
                 html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
             };
-
             newHtml = html.replace('%id%', obj.id);
             newHtml = newHtml.replace('%description%', obj.description);
             newHtml = newHtml.replace('%value%', obj.value);
-
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
         },
 
@@ -167,10 +187,7 @@ let uiController = (function() {
                 document.querySelector(DomStrings.percentageLabel).textContent = obj.percentage + '%';
             } else {
                 document.querySelector(DomStrings.percentageLabel).textContent = '---';
-
             };
-
-        
         },
 
         getDomStrings: function() {
@@ -194,7 +211,6 @@ let controller= (function(budgetCtrl, uiCtrl) {
     };
 
     let updateBudget = function() {
-
         // Calculate the budget
         budgetCtrl.calcBudget();
         // Return the budget
@@ -203,26 +219,29 @@ let controller= (function(budgetCtrl, uiCtrl) {
         uiCtrl.displayBudget(budget);
     };
 
-    let updatePercentage = function() {
-        
+    let updatePercentages = function() {
+        //Calculate Percentages
+        budgetCtrl.calculatePercentage();
+        //Read percentages from the budget controller
+        let percentages = budgetCtrl.getPercentages();
+        //Update the UI with the new percentages
+        console.log(percentages);
     }
     
     let ctrlAddItem = function() {
         // Get the field input data
         let input = uiCtrl.getInput();
-
         if (input.description !== '' && !isNaN(input.value) && input.value > 0) {
             // Add the item to the budget controller
             let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
-
             // Add the Item to the Ui
             uiCtrl.addListItem(newItem, input.type);
-
             // Clear the fields
             uiCtrl.clearFields();
-
             // Calculate and update budget
             updateBudget();
+            //Calculate and update percentages;
+            updatePercentages();
         }; 
     };
 
@@ -233,13 +252,10 @@ let controller= (function(budgetCtrl, uiCtrl) {
             splitId = itemId.split('-');
             type = splitId[0];
             Id = parseInt(splitId[1]);
-
              //Delete the item from the data stucture
             budgetCtrl.deleteItem(type, Id);
-
             //Delete the item form the ui
             uiCtrl.deleteListItem(itemId);
-
             //Update the budget
             updateBudget();
         };
