@@ -283,21 +283,6 @@ let uiController = (function() {
             document.querySelector(DomStrings.inputBtn).classList.toggle('red');
         },
 
-
-
-
-
-
-        changedType: function() {
-            
-        }
-
-
-
-
-
-
-
         // changedType: function() {
         //     let fields = document.querySelectorAll(
         //         DomStrings.inputType + ',' +                
