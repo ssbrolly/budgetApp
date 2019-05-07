@@ -390,3 +390,93 @@
 
 
 
+
+
+
+let budgetController = (function() {
+
+    let Expense = function(id, description, value) {
+        this.id = id,
+        this.description = description,
+        this.value = value
+    };
+
+    let Income = function(id, description, value) {
+        this.id = id,
+        this.description = description,
+        this.value = value
+    };
+
+    let data = {
+        allItems: {
+            expense: [],
+            income: [], 
+        },
+        totals: {
+            expense: 0,
+            income: 0,
+        },
+    };
+
+})();
+
+let uiController = (function() {
+
+    let DomStrings = {
+        inputType: '.add__type',
+        inputDescription: '.add__description',
+        inputValue: '.add__value',
+        inputBtn: '.add__btn',
+    }
+
+
+    return {
+        getInput: function() {
+            return {
+                 type: document.querySelector(DomStrings.inputType).value,
+                 description: document.querySelector(DomStrings.inputDescription).value,
+                 value: document.querySelector(DomStrings.inputValue).value,
+
+            };
+        },
+        getDomStrings: function() {
+            return DomStrings;
+        },
+
+    };
+
+})();
+
+let controller = (function(budgetCtrl, uiCtrl) {
+
+    let dom = uiCtrl.getDomStrings();
+
+    let eventListeners = function() {
+        document.querySelector(dom.inputBtn).addEventListener('click', ctrlAddItem);
+        document.addEventListener('keypress', (e) => {
+            if (e.keyCode === 13 || e.which === 13) {
+                ctrlAddItem();
+            };
+        });
+
+    }
+    
+    let ctrlAddItem = function() {
+        let input = uiCtrl.getInput();
+        console.log(input);
+    };
+
+    return {
+        init: function() {
+            eventListeners();
+            console.log('app has started');
+        }
+    }
+
+
+    
+
+})(budgetController, uiController);
+controller.init();
+
+
