@@ -418,6 +418,30 @@ let budgetController = (function() {
         },
     };
 
+    return {
+        addItem: function(type, des, val) {
+            let newItem, Id, idLength;
+            idLength = data.allItems[type].length;
+            if (idLength > 0) {
+                Id = data.allItems[type][idLength - 1].id + 1;
+            } else {
+                Id = 0;
+            };
+            if (type === 'expense') {
+                newItem = new Expense(Id, des, val);
+            } else if (type === 'income') {
+                newItem = new Income(Id, des, val);
+            };
+            data.allItems[type].push(newItem);
+            return newItem;
+        },
+        testing: function() {
+            console.log(data);
+        }
+    }
+
+
+
 })();
 
 let uiController = (function() {
@@ -463,7 +487,7 @@ let controller = (function(budgetCtrl, uiCtrl) {
     
     let ctrlAddItem = function() {
         let input = uiCtrl.getInput();
-        console.log(input);
+        let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
     };
 
     return {
@@ -480,3 +504,63 @@ let controller = (function(budgetCtrl, uiCtrl) {
 controller.init();
 
 
+
+
+
+let budgetController = (function() {
+
+    let Expense = function(id, description, value) {
+        this.id = id,
+        this.description = description,
+        this.value = value;
+    };
+
+    let Income = function(id, description, value) {
+        this.id = id,
+        this.description = description,
+        this.value = value;
+    };
+
+    let data = {
+        allItems: {
+            expense: [],
+            income: [],
+        },
+        totals: {
+            expense: 0,
+            income: 0,
+        },
+    };
+
+    return {
+        additem: function(type, des, val) {
+            let newItem, Id, idLength;
+            idLength = data.allItems[type].length;
+            if (idLength > 0) {
+                Id = data.allItems[type][idLength].id +1;
+            } else {
+                Id = 0;
+            };
+            if (type === 'expense') {
+                newItem = new Expense(Id, des, val);
+            } else if (type === 'income') {
+                newItem = new Income(Id, des, val);
+            };
+            data.allItems[type].push(newItem);
+            return newItem;
+        }
+    }
+
+
+
+})();
+
+let uiController = (function() {
+
+})();
+
+let controller = (function(budgetCtrl, uiCtrl) {
+
+    let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+
+})(budgetController, uiController);
