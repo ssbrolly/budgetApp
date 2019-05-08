@@ -393,138 +393,157 @@
 
 
 
-let budgetController = (function() {
+// let budgetController = (function() {
 
-    let Expense = function(id, description, value) {
-        this.id = id,
-        this.description = description,
-        this.value = value
-    };
+//     let Expense = function(id, description, value) {
+//         this.id = id,
+//         this.description = description,
+//         this.value = value
+//     };
 
-    let Income = function(id, description, value) {
-        this.id = id,
-        this.description = description,
-        this.value = value
-    };
+//     let Income = function(id, description, value) {
+//         this.id = id,
+//         this.description = description,
+//         this.value = value
+//     };
 
-    let data = {
-        allItems: {
-            expense: [],
-            income: [], 
-        },
-        totals: {
-            expense: 0,
-            income: 0,
-        },
-    };
+//     let data = {
+//         allItems: {
+//             expense: [],
+//             income: [], 
+//         },
+//         totals: {
+//             expense: 0,
+//             income: 0,
+//         },
+//     };
 
-    return {
-        addItem: function(type, des, val) {
-            let newItem, Id, idLength;
-            idLength = data.allItems[type].length;
-            if (idLength > 0) {
-                Id = data.allItems[type][idLength - 1].id + 1;
-            } else {
-                Id = 0;
-            };
-            if (type === 'expense') {
-                newItem = new Expense(Id, des, val);
-            } else if (type === 'income') {
-                newItem = new Income(Id, des, val);
-            };
-            data.allItems[type].push(newItem);
-            return newItem;
-        },
-        testing: function() {
-            console.log(data);
-        }
-    }
+//     return {
+//         addItem: function(type, des, val) {
+//             let newItem, Id, idLength;
+//             idLength = data.allItems[type].length;
+//             if (idLength > 0) {
+//                 Id = data.allItems[type][idLength - 1].id + 1;
 
+//             } else {
+//                 Id = 0;
 
+//             };
+//             if (type === 'expense') {
+//                 newItem = new Expense(Id, des, val);
 
-})();
+//             } else if (type === 'income') {
+//                 newItem = new Income(Id, des, val);
 
-let uiController = (function() {
-
-    let DomStrings = {
-        inputType: '.add__type',
-        inputDescription: '.add__description',
-        inputValue: '.add__value',
-        inputBtn: '.add__btn',
-        incomeContainer: '.income__list',
-        expensesConstainer: '.expenses__list',
-    };
+//             };
+//             data.allItems[type].push(newItem);
+//             return newItem;
+//         },
+//         testing: function() {
+//             console.log(data);
+//         }
+//     }
 
 
-    return {
-        getInput: function() {
-            return {
-                 type: document.querySelector(DomStrings.inputType).value,
-                 description: document.querySelector(DomStrings.inputDescription).value,
-                 value: document.querySelector(DomStrings.inputValue).value,
 
-            };
-        },
+// })();
 
-        addItem: function(obj, type) {
-            let html, newHtml, element;
-            if (type === 'income') {
-                element = DomStrings.incomeContainer;
-                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div></div> </div>'
+// let uiController = (function() {
 
-            } else if (type === 'expense') {
-                element = DomStrings.expensesConstainer;
-                html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+//     let DomStrings = {
+//         inputType: '.add__type',
+//         inputDescription: '.add__description',
+//         inputValue: '.add__value',
+//         inputBtn: '.add__btn',
+//         incomeContainer: '.income__list',
+//         expensesConstainer: '.expenses__list',
+//     };
 
-            };
-            newHtml = html.replace('%id', obj.id);
-            newHtml = newHtml.replace('%description%', obj.description);
-            newHtml = newHtml.replace('%value%', obj.value);
 
-            document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+//     return {
+//         getInput: function() {
+//             return {
+//                  type: document.querySelector(DomStrings.inputType).value,
+//                  description: document.querySelector(DomStrings.inputDescription).value,
+//                  value: parseFloat(document.querySelector(DomStrings.inputValue).value),
 
-        },
+//             };
+//         },
 
-        getDomStrings: function() {
-            return DomStrings;
-        },
+//         addItem: function(obj, type) {
+//             let html, newHtml, element;
+//             if (type === 'income') {
+//                 element = DomStrings.incomeContainer;
+//                 html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div></div> </div>'
 
-    };
+//             } else if (type === 'expense') {
+//                 element = DomStrings.expensesConstainer;
+//                 html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
 
-})();
+//             };
+//             newHtml = html.replace('%id', obj.id);
+//             newHtml = newHtml.replace('%description%', obj.description);
+//             newHtml = newHtml.replace('%value%', obj.value);
 
-let controller = (function(budgetCtrl, uiCtrl) {
+//             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
 
-    let dom = uiCtrl.getDomStrings();
+//         },
 
-    let eventListeners = function() {
-        document.querySelector(dom.inputBtn).addEventListener('click', ctrlAddItem);
-        document.addEventListener('keypress', (e) => {
-            if (e.keyCode === 13 || e.which === 13) {
-                ctrlAddItem();
-            };
-        });
+//         clearFields: function() {
+//             let fields, fieldsArr;
+//             fields = document.querySelectorAll(DomStrings.inputDescription + ',' + DomStrings.inputValue);
+//             fieldsArr = Array.from(fields);
+//             fieldsArr.forEach(cur => {
+//                 cur.value = '';
+//             });
+//             fieldsArr[0].focus();
+//         },  
 
-    }
+//         getDomStrings: function() {
+//             return DomStrings;
+//         },
+
+//     };
+
+// })();
+
+// let controller = (function(budgetCtrl, uiCtrl) {
+
+//     let dom = uiCtrl.getDomStrings();
+
+//     let eventListeners = function() {
+//         document.querySelector(dom.inputBtn).addEventListener('click', ctrlAddItem);
+//         document.addEventListener('keypress', (e) => {
+//             if (e.keyCode === 13 || e.which === 13) {
+//                 ctrlAddItem();
+//             };
+//         });
+        
+//     }
     
-    let ctrlAddItem = function() {
-        let input = uiCtrl.getInput();
-        let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
-        uiCtrl.addItem(newItem, input.type);
-    };
+//     let ctrlAddItem = function() {
+//         let input = uiCtrl.getInput();
 
-    return {
-        init: function() {
-            eventListeners();
-            console.log('app has started');
-        }
-    }
+//         if (input.description !== '' && !isNaN(input.value) && input.value > 0) {
+//             let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+//             uiCtrl.addItem(newItem, input.type);
+//             uiCtrl.clearFields();
+//         }
+
+//     };
+
+//     return {
+//         init: function() {
+//             eventListeners();
+//             console.log('app has started');
+//         }
+//     }
 
 
     
 
-})(budgetController, uiController);
-controller.init();
+// })(budgetController, uiController);
+// controller.init();
 
 
 
