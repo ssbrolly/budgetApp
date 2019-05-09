@@ -393,157 +393,221 @@
 
 
 
-// let budgetController = (function() {
+let budgetController = (function() {
 
-//     let Expense = function(id, description, value) {
-//         this.id = id,
-//         this.description = description,
-//         this.value = value
-//     };
+    let Expense = function(id, description, value) {
+        this.id = id,
+        this.description = description,
+        this.value = value
+    };
 
-//     let Income = function(id, description, value) {
-//         this.id = id,
-//         this.description = description,
-//         this.value = value
-//     };
+    let Income = function(id, description, value) {
+        this.id = id,
+        this.description = description,
+        this.value = value
+    };
 
-//     let data = {
-//         allItems: {
-//             expense: [],
-//             income: [], 
-//         },
-//         totals: {
-//             expense: 0,
-//             income: 0,
-//         },
-//     };
+    let calculateTotal = function(type) {
+        let sum = 0;
+        data.allItems[type].forEach(cur => {
+            sum += cur.value;
+        });
+        data.totals[type] = sum;
+    };
 
-//     return {
-//         addItem: function(type, des, val) {
-//             let newItem, Id, idLength;
-//             idLength = data.allItems[type].length;
-//             if (idLength > 0) {
-//                 Id = data.allItems[type][idLength - 1].id + 1;
+   
+    let data = {
+        allItems: {
+            expense: [],
+            income: [], 
+        },
+        totals: {
+            expense: 0,
+            income: 0,
+        },
+        budget: 0,
+        percentage: -1,
+    };
 
-//             } else {
-//                 Id = 0;
+    
+    return {
+        addItem: function(type, des, val) {
+            let newItem, Id, idLength;
+            idLength = data.allItems[type].length;
+            if (idLength > 0) {
+                Id = data.allItems[type][idLength - 1].id + 1;
 
-//             };
-//             if (type === 'expense') {
-//                 newItem = new Expense(Id, des, val);
+            } else {
+                Id = 0;
 
-//             } else if (type === 'income') {
-//                 newItem = new Income(Id, des, val);
+            };
+            if (type === 'expense') {
+                newItem = new Expense(Id, des, val);
 
-//             };
-//             data.allItems[type].push(newItem);
-//             return newItem;
-//         },
-//         testing: function() {
-//             console.log(data);
-//         }
-//     }
+            } else if (type === 'income') {
+                newItem = new Income(Id, des, val);
+
+            };
+            data.allItems[type].push(newItem);
+            return newItem;
+        },
+
+        calculateBudget: function() {
+            calculateTotal('expense');
+            calculateTotal('income');
+            
+            data.budget = data.totals.income - data.totals.expense;
+
+            if (data.totals.income > 0) {
+                data.percentage = Math.round((data.totals.expense / data.totals.income) * 100);
+            } else {
+                data.percentage = -1;
+            }
+        },
+
+        getBudget: function() {
+            return {
+                budget: data.budget,
+                totalIncome: data.totals.income,
+                totalExpense: data.totals.expense,
+                percentage: data.percentage, 
+            };
+        },
+
+        testing: function() {
+            console.log(data);
+        }
+    }
+
+})();
+
+let uiController = (function() {
+
+    let DomStrings = {
+        inputType: '.add__type',
+        inputDescription: '.add__description',
+        inputValue: '.add__value',
+        inputBtn: '.add__btn',
+        incomeContainer: '.income__list',
+        expensesConstainer: '.expenses__list',
+        budgetLabel: '.budget__value',
+        incomeLabel: '.budget__income--value',
+        expenseLabel: '.budget__expenses--value',
+        percentageLabel: '.budget__expenses--percentage',      
+    };
 
 
+    return {
+        getInput: function() {
+            return {
+                 type: document.querySelector(DomStrings.inputType).value,
+                 description: document.querySelector(DomStrings.inputDescription).value,
+                 value: parseFloat(document.querySelector(DomStrings.inputValue).value),
 
-// })();
+            };
+        },
 
-// let uiController = (function() {
+        addItem: function(obj, type) {
+            let html, newHtml, element;
+            if (type === 'income') {
+                element = DomStrings.incomeContainer;
+                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div></div> </div>'
 
-//     let DomStrings = {
-//         inputType: '.add__type',
-//         inputDescription: '.add__description',
-//         inputValue: '.add__value',
-//         inputBtn: '.add__btn',
-//         incomeContainer: '.income__list',
-//         expensesConstainer: '.expenses__list',
-//     };
+            } else if (type === 'expense') {
+                element = DomStrings.expensesConstainer;
+                html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
 
+            };
+            newHtml = html.replace('%id', obj.id);
+            newHtml = newHtml.replace('%description%', obj.description);
+            newHtml = newHtml.replace('%value%', obj.value);
 
-//     return {
-//         getInput: function() {
-//             return {
-//                  type: document.querySelector(DomStrings.inputType).value,
-//                  description: document.querySelector(DomStrings.inputDescription).value,
-//                  value: parseFloat(document.querySelector(DomStrings.inputValue).value),
+            document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
 
-//             };
-//         },
+        },
 
-//         addItem: function(obj, type) {
-//             let html, newHtml, element;
-//             if (type === 'income') {
-//                 element = DomStrings.incomeContainer;
-//                 html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div></div> </div>'
+        clearFields: function() {
+            let fields, fieldsArr;
+            fields = document.querySelectorAll(DomStrings.inputDescription + ',' + DomStrings.inputValue);
+            fieldsArr = Array.from(fields);
+            fieldsArr.forEach(cur => {
+                cur.value = '';
+            });
+            fieldsArr[0].focus();
+        },  
 
-//             } else if (type === 'expense') {
-//                 element = DomStrings.expensesConstainer;
-//                 html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+        displayBudget: function(obj) {
+            document.querySelector(DomStrings.budgetLabel).textContent = obj.budget ;
+            document.querySelector(DomStrings.incomeLabel).textContent = obj.totalIncome;
+            document.querySelector(DomStrings.expenseLabel).textContent = obj.totalExpense;
 
-//             };
-//             newHtml = html.replace('%id', obj.id);
-//             newHtml = newHtml.replace('%description%', obj.description);
-//             newHtml = newHtml.replace('%value%', obj.value);
+            if (obj.percentage > 0) {
+                document.querySelector(DomStrings.percentageLabel).textContent = obj.percentage + '%'; 
+            } else {
+                document.querySelector(DomStrings.percentageLabel).textContent = '---'; 
+            }
 
-//             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+        },
 
-//         },
+        getDomStrings: function() {
+            return DomStrings;
+        },
 
-//         clearFields: function() {
-//             let fields, fieldsArr;
-//             fields = document.querySelectorAll(DomStrings.inputDescription + ',' + DomStrings.inputValue);
-//             fieldsArr = Array.from(fields);
-//             fieldsArr.forEach(cur => {
-//                 cur.value = '';
-//             });
-//             fieldsArr[0].focus();
-//         },  
+    };
 
-//         getDomStrings: function() {
-//             return DomStrings;
-//         },
+})();
 
-//     };
+let controller = (function(budgetCtrl, uiCtrl) {
 
-// })();
+    let dom = uiCtrl.getDomStrings();
 
-// let controller = (function(budgetCtrl, uiCtrl) {
-
-//     let dom = uiCtrl.getDomStrings();
-
-//     let eventListeners = function() {
-//         document.querySelector(dom.inputBtn).addEventListener('click', ctrlAddItem);
-//         document.addEventListener('keypress', (e) => {
-//             if (e.keyCode === 13 || e.which === 13) {
-//                 ctrlAddItem();
-//             };
-//         });
+    let eventListeners = function() {
+        document.querySelector(dom.inputBtn).addEventListener('click', ctrlAddItem);
+        document.addEventListener('keypress', (e) => {
+            if (e.keyCode === 13 || e.which === 13) {
+                ctrlAddItem();
+            };
+        });
         
-//     }
+    };
+
+    let updateBudget = function() {
+        budgetCtrl.calculateBudget();
+        let budget = budgetCtrl.getBudget();
+        uiCtrl.displayBudget(budget);
+    }
     
-//     let ctrlAddItem = function() {
-//         let input = uiCtrl.getInput();
+    let ctrlAddItem = function() {
+        const input = uiCtrl.getInput();
 
-//         if (input.description !== '' && !isNaN(input.value) && input.value > 0) {
-//             let newItem = budgetCtrl.addItem(input.type, input.description, input.value);
-//             uiCtrl.addItem(newItem, input.type);
-//             uiCtrl.clearFields();
-//         }
+        if (input.description !== '' && !isNaN(input.value) && input.value > 0) {
+            const newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+            uiCtrl.addItem(newItem, input.type);
+            uiCtrl.clearFields();
+            updateBudget();
+        }
 
-//     };
+    };
 
-//     return {
-//         init: function() {
-//             eventListeners();
-//             console.log('app has started');
-//         }
-//     }
+    return {
+        init: function() {
+            eventListeners();
+            uiCtrl.displayBudget({
+                budget: 0,
+                totalIncome: 0,
+                totalExpense: 0,
+                percentage: 0, 
+           
+            });
+            console.log('app has started');
+        }
+    }
 
 
     
 
-// })(budgetController, uiController);
-// controller.init();
+})(budgetController, uiController);
+controller.init();
 
 
 
