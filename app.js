@@ -534,6 +534,7 @@ let uiController = (function() {
         expenseLabel: '.budget__expenses--value',
         percentageLabel: '.budget__expenses--percentage',      
         container: '.container',
+        expensesPercLabel: '.item__percentage',
     };
 
 
@@ -551,7 +552,7 @@ let uiController = (function() {
             let html, newHtml, element;
             if (type === 'income') {
                 element = DomStrings.incomeContainer;
-                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div></div> </div>'
+                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn">x</button> </div></div> </div>'
 
             } else if (type === 'expense') {
                 element = DomStrings.expensesConstainer;
@@ -590,7 +591,20 @@ let uiController = (function() {
             } else {
                 document.querySelector(DomStrings.percentageLabel).textContent = '---'; 
             }
+        },
 
+        displayPercentages: function(percentages) {
+            let fields = document.querySelectorAll(DomStrings.expensesPercLabel);
+
+            let nodeListForEach = function(list, callback) {
+                for (let i = 0; i < list.length; i++) {
+                    callback(list[i], i);
+                };
+
+            }
+            nodeListForEach(fields, (cur, index) => {
+                cur.textContent = percentages[index] + '%';
+            })
         },
 
         getDomStrings: function() {
@@ -612,13 +626,12 @@ let controller = (function(budgetCtrl, uiCtrl) {
                 ctrlAddItem();
             };
         });
-        document.querySelector(dom.container).addEventListener('click', ctrlDeleteItem);
+        document.querySelector(dom.container).addEventListener('keypress', ctrlDeleteItem);
     };
 
     let ctrlDeleteItem = function(e) {
         let itemId,splitId, Id, type;
-        itemId = e.target.parentNode.parentNode.parentNode.parentNode.id;
-
+        itemId = e.target.parentNode.parentNode.parentNode.parent.id;
         if (itemId) {
             splitId = itemId.split('-');
             type = splitId[0];
@@ -636,7 +649,7 @@ let controller = (function(budgetCtrl, uiCtrl) {
     let updatePercentages =  function() {
         budgetCtrl.calculatePercentage();
         let percentages = budgetCtrl.getPercentages();
-        console.log(percentages);
+        uiCtrl.displayPercentages(percentages);
     }
 
     let updateBudget = function() {
@@ -682,7 +695,55 @@ controller.init();
 
 
 
+budgetController = (function() {
+
+    let calcBudget = function(type) {
+        let sum = 0;
+        data.allItems[type].forEach(cur => {
+            sum += cur.value;
+        });
+        data.totals[type] = sum;
+    };
 
 
+
+    return {
+        calculateBudget: function() {
+            calcBudget('expense');
+            calcBudget('expense');
+
+            data.budget = data.totals.income - data.totals.expense;
+
+            if (data.totals.income > 0) {
+                data.percentage = Math.round((data.totals.expense / data.totals.income) * 100);
+            } else {
+                data.percentage = -1;
+            }
+        },
+    };
+
+})();
+
+
+deleteItem: function(type, id) {
+    let ids = data.allItems[type].map(cur => {
+        return cur.id;
+    });
+    index = ids.indexOf(id);
+
+    if (index !== -1) {
+        data.allItems[type].splice(index, 1);
+    };
+};
+
+ctrlDeleteItem = function() {
+    
+}
+
+
+let updateBudget = function() {
+    //calculate the budget;
+    budgetCtrl.calculateBudget();
+}
 
 
