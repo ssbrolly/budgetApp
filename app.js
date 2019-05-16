@@ -535,8 +535,19 @@ let uiController = (function() {
         percentageLabel: '.budget__expenses--percentage',      
         container: '.container',
         expensesPercLabel: '.item__percentage',
+        dateLabel: '.budget__title--month',
     };
 
+    let formatNumber = function(num, type) {
+        num = Math.abs(num);
+        num = num.toFixed(2);
+        let numSplit = num.split('.');
+        let int = parseInt(numSplit[0]);
+        int = int.toLocaleString();
+        let dec = numSplit[1];
+
+        return (type === 'expense' ? '-' : '+') + ' ' + int + '.' + dec;
+    };
 
     return {
         getInput: function() {
@@ -561,7 +572,7 @@ let uiController = (function() {
             };
             newHtml = html.replace('%id%', obj.id);
             newHtml = newHtml.replace('%description%', obj.description);
-            newHtml = newHtml.replace('%value%', obj.value);
+            newHtml = newHtml.replace('%value%', formatNumber(obj.value, type));
 
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
 
@@ -582,9 +593,11 @@ let uiController = (function() {
         },
 
         displayBudget: function(obj) {
-            document.querySelector(DomStrings.budgetLabel).textContent = obj.budget ;
-            document.querySelector(DomStrings.incomeLabel).textContent = obj.totalIncome;
-            document.querySelector(DomStrings.expenseLabel).textContent = obj.totalExpense;
+            let type;
+            obj.budget > 0 ? type = 'income' : type = 'expense';
+            document.querySelector(DomStrings.budgetLabel).textContent = formatNumber(obj.budget, type);
+            document.querySelector(DomStrings.incomeLabel).textContent = formatNumber(obj.totalIncome, 'income');
+            document.querySelector(DomStrings.expenseLabel).textContent = formatNumber(obj.totalExpense, 'expense');
 
             if (obj.percentage > 0) {
                 document.querySelector(DomStrings.percentageLabel).textContent = obj.percentage + '%'; 
@@ -603,9 +616,21 @@ let uiController = (function() {
 
             }
             nodeListForEach(fields, (cur, index) => {
-                cur.textContent = percentages[index] + '%';
-            })
+                if (percentages[index] !== -1) {
+                    cur.textContent = percentages[index] + '%';
+                } else {
+                    cur.textContent = '---';
+                }
+            }) 
         },
+
+        displayMonth: function() {
+            let now = new Date();
+            let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+            let month = now.getMonth();
+            let year = now.getFullYear();
+            document.querySelector(DomStrings.dateLabel).textContent = months[month] + ' ' + year;
+        }, 
 
         getDomStrings: function() {
             return DomStrings;
@@ -675,6 +700,7 @@ let controller = (function(budgetCtrl, uiCtrl) {
     return {
         init: function() {
             eventListeners();
+            uiCtrl.displayMonth();
             uiCtrl.displayBudget({
                 budget: 0,
                 totalIncome: 0,
@@ -691,6 +717,25 @@ let controller = (function(budgetCtrl, uiCtrl) {
 
 })(budgetController, uiController);
 controller.init();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
