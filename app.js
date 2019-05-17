@@ -664,7 +664,8 @@ let controller = (function(budgetCtrl, uiCtrl) {
             budgetCtrl.deleteItem(type, Id);
 
             //Delete the item form the UI;
-            document.getElementById(itemId).remove();
+            // document.getElementById(itemId).remove();
+            uiCtrl.deleteListItem(itemId);
 
             updateBudget();
             updatePercentages();
@@ -717,20 +718,6 @@ let controller = (function(budgetCtrl, uiCtrl) {
 
 })(budgetController, uiController);
 controller.init();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
