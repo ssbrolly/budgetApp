@@ -588,6 +588,12 @@ let uiController = (function() {
         return (type === '' ? '' : type === 'income' ? '+' : '-') + ' ' + int + '.' + dec;
     };
 
+    let nodeListForEach = function (list, callback) {
+        for (let i = 0; i < list.length; i++) {
+            callback(list[i], i);
+        };
+    };
+
     return {
         getInput: function() {
             return {
@@ -602,10 +608,10 @@ let uiController = (function() {
 
             if (type === 'income') {
                 element = DomStrings.incomeContainer;
-                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+                html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn">x</button></div></div></div>'
             } else if (type === 'expense') {
                 element = DomStrings.expensesContainer;
-                html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+                html = '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn">x</button></div></div></div>'
             };
 
             newHtml = html.replace('%id%', obj.id);
@@ -653,21 +659,24 @@ let uiController = (function() {
         },
 
         displayPercentage: function(percentage) {
-            let fields = document.querySelectorAll(DomStrings.expensesPercLabel);
-            
-            let nodeListForEach = function(list, callback) {
-                for (let i = 0; i < list.length; i++) {
-                    callback(list[i], i);
-                };
-            };
-
-            nodeListForEach(fields, (cur, index) => {
-                if (percentage[index] !== -1) {
+            let fieldsArr = document.querySelectorAll(DomStrings.expensesPercLabel);
+           
+            // let fieldsArr = Array.from(fields);
+            fieldsArr.forEach((cur, index) => {
+                if (percentage[index] > 0) {
                     cur.textContent = percentage[index] + '%';
                 } else {
-                    cur.textContent = '---';
+                    cur.textContent = '---;'
                 };
             });
+
+            // nodeListForEach(fields, (cur, index) => {
+            //     if (percentage[index] !== -1) {
+            //         cur.textContent = percentage[index] + '%';
+            //     } else {
+            //         cur.textContent = '---';
+            //     };
+            // });
         },
         
         displayMonth: function() {
@@ -677,6 +686,20 @@ let uiController = (function() {
             let year = now.getFullYear();
 
             document.querySelector(DomStrings.dateLabel).textContent = months[month] + ' ' + year;
+        },
+
+        changedType: function() {
+            let fields = document.querySelectorAll(
+                DomStrings.inputDescription + ',' +
+                DomStrings.inputType + ',' +
+                DomStrings.inputValue  + ',' +
+                DomStrings.inputBtn
+                );
+            nodeListForEach(fields, cur => {
+                cur.classList.toggle('red-focus');
+            });
+            document.querySelector(DomStrings.inputBtn).classList.toggle('red');
+
         },
 
         getDomStrings: function() {
@@ -699,6 +722,7 @@ let controller = (function(budgetCtrl, uiCtrl) {
             }
         });
         document.querySelector(dom.container).addEventListener('click', ctrlDeleteItem);
+        document.querySelector(dom.inputType).addEventListener('change', uiCtrl.changedType);
     };
     
     const ctrlAddItem = function() {
@@ -714,7 +738,7 @@ let controller = (function(budgetCtrl, uiCtrl) {
 
     let ctrlDeleteItem = function(e) {
         let itemId, splitId, Id, type; 
-        itemId = e.target.parentNode.parentNode.parentNode.parentNode.id;
+        itemId = e.target.parentNode.parentNode.parentNode.id;
         if (itemId) {
             splitId = itemId.split('-');
             type = splitId[0];
@@ -763,8 +787,9 @@ let controller = (function(budgetCtrl, uiCtrl) {
 
 })(budgetController, uiController);
 
-
 controller.init();
+
+
 
 
 
