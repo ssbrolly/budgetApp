@@ -202,7 +202,7 @@ h2 {
 .income__title { color: #28B9B5; }
 .expenses__title { color: #FF5049; }
 
- {
+.item {
     padding: 13px;
     border-bottom: 1px solid #e7e7e7;
 }
